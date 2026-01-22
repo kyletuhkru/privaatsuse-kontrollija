@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privaatsusseadete haldur</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f7f7f7;
+        }
+        h1 {
+            color: #333;
+        }
+        .service {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin: 5px 0;
+        }
+        button {
+            margin-top: 10px;
+            padding: 8px 12px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Privaatsusseadete haldur</h1>
+    <p>Vali teenus ja muuda oma privaatsusseadeid lihtsasti.</p>
+
+    <div class="service">
+        <h2>Google</h2>
+        <label>
+            <input type="checkbox" id="google-location">
+            Asukohateenused
+        </label>
+        <label>
+            <input type="checkbox" id="google-ads">
+            Isikupärastatud reklaamid
+        </label>
+        <button onclick="saveSettings('google')">Salvesta seaded</button>
+        <div class="result" id="result-google"></div>
+    </div>
+
+    <div class="service">
+        <h2>Facebook</h2>
+        <label>
+            <input type="checkbox" id="fb-location">
+            Asukohateenused
+        </label>
+        <label>
+            <input type="checkbox" id="fb-ads">
+            Isikupärastatud reklaamid
+        </label>
+        <button onclick="saveSettings('facebook')">Salvesta seaded</button>
+        <div class="result" id="result-facebook"></div>
+    </div>
+
+    <script>
+        // Lae salvestatud seaded
+        window.onload = function() {
+            loadSettings('google', ['google-location', 'google-ads']);
+            loadSettings('facebook', ['fb-location', 'fb-ads']);
+        }
+
+        function saveSettings(service) {
+            const settings = {};
+            if(service === 'google') {
+                settings.location = document.getElementById('google-location').checked;
+                settings.ads = document.getElementById('google-ads').checked;
+                localStorage.setItem('google-settings', JSON.stringify(settings));
+                document.getElementById('result-google').textContent = "Seaded salvestatud!";
+            } else if(service === 'facebook') {
+                settings.location = document.getElementById('fb-location').checked;
+                settings.ads = document.getElementById('fb-ads').checked;
+                localStorage.setItem('facebook-settings', JSON.stringify(settings));
+                document.getElementById('result-facebook').textContent = "Seaded salvestatud!";
+            }
+        }
+
+        function loadSettings(service, elementIds) {
+            const saved = localStorage.getItem(service + '-settings');
+            if(saved) {
+                const settings = JSON.parse(saved);
+                if(service === 'google') {
+                    document.getElementById('google-location').checked = settings.location;
+                    document.getElementById('google-ads').checked = settings.ads;
+                } else if(service === 'facebook') {
+                    document.getElementById('fb-location').checked = settings.location;
+                    document.getElementById('fb-ads').checked = settings.ads;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
