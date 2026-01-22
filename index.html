@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privaatsuse Kontrollija</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        input, button { padding: 8px; margin: 5px 0; }
+        #resultContainer { margin-top: 20px; padding: 10px; border: 1px solid #ccc; display: none; }
+    </style>
+</head>
+<body>
+    <h1>Privaatsuse Kontrollija</h1>
+
+    <label for="dataInput">Sisesta oma andmed:</label><br>
+    <input type="text" id="dataInput" placeholder="Kirjuta midagi..."><br>
+
+    <button id="calculateBtn">Kontrolli privaatsust</button>
+
+    <div id="resultContainer">
+        <h2>Tulemus:</h2>
+        <p id="resultText"></p>
+    </div>
+
+    <script>
+        // Funktsioon, mis arvutab tulemuse (näiteks sisendi näitamine)
+        function calculateResult() {
+            const input = document.getElementById("dataInput").value.trim();
+            if (!input) return "Palun sisesta andmed!";
+            return `Sinu sisestatud andmed on: ${input}`;
+        }
+
+        // Funktsioon, mis kuvab tulemuse lehel
+        function showResult(result) {
+            const container = document.getElementById("resultContainer");
+            const resultText = document.getElementById("resultText");
+            resultText.textContent = result;
+            container.style.display = "block";
+
+            // Muuda URL hash, et #result link töötaks
+            window.location.hash = "result";
+        }
+
+        // Salvesta tulemuse nuppu vajutades
+        document.getElementById("calculateBtn").addEventListener("click", () => {
+            const result = calculateResult();
+            showResult(result);
+
+            // Salvesta tulemus localStorage-sse, et säiliks refresh-i või uue tab-i puhul
+            localStorage.setItem("privaatsuseResult", JSON.stringify(result));
+        });
+
+        // Lehe laadimisel kontrolli hash-i ja taasta tulemus
+        window.addEventListener("load", () => {
+            if (window.location.hash === "#result") {
+                const saved = localStorage.getItem("privaatsuseResult");
+                if (saved) {
+                    const resultData = JSON.parse(saved);
+                    showResult(resultData);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
