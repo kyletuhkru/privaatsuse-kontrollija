@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privaatsuse kontrollija</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            color: #555;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .score {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .legend {
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+        .legend span {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <h1>Privaatsuse kontrollija</h1>
+    <p>Märgi linnukesed nende privaatsusseadete juures, mis sul on sisse lülitatud. See aitab näha, kui turvaline ja privaatne sinu veebikasutus on.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Teenuse nimi</th>
+                <th>Seade</th>
+                <th>Privaatne?</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Google</td>
+                <td>Asukohateenused</td>
+                <td><input type="checkbox" class="setting" id="google-location"></td>
+            </tr>
+            <tr>
+                <td>Google</td>
+                <td>Isikupärastatud reklaamid</td>
+                <td><input type="checkbox" class="setting" id="google-ads"></td>
+            </tr>
+            <tr>
+                <td>Facebook</td>
+                <td>Asukohateenused</td>
+                <td><input type="checkbox" class="setting" id="fb-location"></td>
+            </tr>
+            <tr>
+                <td>Facebook</td>
+                <td>Isikupärastatud reklaamid</td>
+                <td><input type="checkbox" class="setting" id="fb-ads"></td>
+            </tr>
+            <tr>
+                <td>Twitter</td>
+                <td>Privaatsed sõnumid</td>
+                <td><input type="checkbox" class="setting" id="twitter-dm"></td>
+            </tr>
+            <tr>
+                <td>Instagram</td>
+                <td>Kontoprofiili nähtavus ainult sõpradele</td>
+                <td><input type="checkbox" class="setting" id="insta-private"></td>
+            </tr>
+            <tr>
+                <td>TikTok</td>
+                <td>Isikupärastatud sisu</td>
+                <td><input type="checkbox" class="setting" id="tiktok-personalized"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button onclick="calculateScore()">Kontrolli privaatsust</button>
+    <p class="score" id="privacyScore">Sinu privaatsuse skoor: 0%</p>
+
+    <div class="legend">
+        <strong>Legenda:</strong>
+        <span style="background:red;"></span> Väga avalik
+        <span style="background:orange; margin-left:15px;"></span> Keskmine
+        <span style="background:green; margin-left:15px;"></span> Hea
+    </div>
+
+    <script>
+        // Kaal igale seadistusele (1 = standard)
+        const weight = 1;
+
+        // Lae salvestatud seaded LocalStorage'st
+        window.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.setting').forEach(cb => {
+                const saved = localStorage.getItem(cb.id);
+                if(saved !== null) {
+                    cb.checked = saved === 'true';
+                }
+            });
+        });
+
+        // Arvuta privaatsuse skoor
+        function calculateScore() {
+            const checkboxes = document.querySelectorAll('.setting');
+            let total = 0;
+            let privateCount = 0;
+
+            checkboxes.forEach(cb => {
+                total += weight;
+                if(cb.checked) privateCount += weight;
+                // Salvesta LocalStorage'sse
+                localStorage.setItem(cb.id, cb.checked);
+            });
+
+            const score = total ? Math.round((privateCount / total) * 100) : 0;
+            const scoreEl = document.getElementById('privacyScore');
+            scoreEl.textContent = `Sinu privaatsuse skoor: ${score}%`;
+
+            if(score < 50) {
+                scoreEl.style.color = 'red';
+            } else if(score < 80) {
+                scoreEl.style.color = 'orange';
+            } else {
+                scoreEl.style.color = 'green';
+            }
+        }
+    </script>
+</body>
+</html>
