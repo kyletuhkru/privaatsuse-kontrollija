@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privaatsuse kontrollija</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .score {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Privaatsuse ja turvalisuse kontrollija</h1>
+    <p>Märgi linnukesed privaatsusseadete jaoks ja vaata oma turvalisuse skoori.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Teenuse nimi</th>
+                <th>Seade</th>
+                <th>Privaatne?</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Google</td>
+                <td>Asukohateenused</td>
+                <td><input type="checkbox" class="setting" data-weight="1" id="google-location"></td>
+            </tr>
+            <tr>
+                <td>Google</td>
+                <td>Isikupärastatud reklaamid</td>
+                <td><input type="checkbox" class="setting" data-weight="1" id="google-ads"></td>
+            </tr>
+            <tr>
+                <td>Facebook</td>
+                <td>Asukohateenused</td>
+                <td><input type="checkbox" class="setting" data-weight="1" id="fb-location"></td>
+            </tr>
+            <tr>
+                <td>Facebook</td>
+                <td>Isikupärastatud reklaamid</td>
+                <td><input type="checkbox" class="setting" data-weight="1" id="fb-ads"></td>
+            </tr>
+            <tr>
+                <td>Twitter</td>
+                <td>Privaatsed sõnumid</td>
+                <td><input type="checkbox" class="setting" data-weight="1" id="twitter-dm"></td>
+            </tr>
+            <tr>
+                <td>Instagram</td>
+                <td>Kontoprofiili nähtavus ainult sõpradele</td>
+                <td><input type="checkbox" class="setting" data-weight="1" id="insta-private"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button onclick="calculateScore()">Kontrolli privaatsust</button>
+    <p class="score" id="privacyScore">Sinu privaatsuse skoor: 0%</p>
+
+    <script>
+        // Lae salvestatud seaded LocalStorage'st
+        window.onload = function() {
+            document.querySelectorAll('.setting').forEach(cb => {
+                const saved = localStorage.getItem(cb.id);
+                if(saved !== null) {
+                    cb.checked = saved === 'true';
+                }
+            });
+        }
+
+        function calculateScore() {
+            const checkboxes = document.querySelectorAll('.setting');
+            let total = 0;
+            let privateCount = 0;
+
+            checkboxes.forEach(cb => {
+                total += parseInt(cb.dataset.weight);
+                if(cb.checked) privateCount += parseInt(cb.dataset.weight);
+                // Salvesta LocalStorage'sse
+                localStorage.setItem(cb.id, cb.checked);
+            });
+
+            const score = total ? Math.round((privateCount / total) * 100) : 0;
+            const scoreEl = document.getElementById('privacyScore');
+            scoreEl.textContent = `Sinu privaatsuse skoor: ${score}%`;
+
+            if(score < 50) {
+                scoreEl.style.color = 'red';
+            } else if(score < 80) {
+                scoreEl.style.color = 'orange';
+            } else {
+                scoreEl.style.color = 'green';
+            }
+        }
+    </script>
+</body>
+</html>
